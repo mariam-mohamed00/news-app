@@ -22,4 +22,22 @@ class NewsContainerViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+
+  void searchNews(String query) async {
+    newsList = null;
+    errorMessage = null;
+    notifyListeners();
+    try {
+      var searchNews = await ApiManager.searchNews(query);
+      if (searchNews.status == 'error') {
+        errorMessage = searchNews.message;
+      } else {
+        newsList = searchNews.articles;
+      }
+    } catch (e) {
+      errorMessage = 'Error Loading News List';
+    }
+    notifyListeners();
+  }
 }
