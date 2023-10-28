@@ -6,7 +6,6 @@ import 'package:news/news/news_article.dart';
 
 class NewsItem extends StatefulWidget {
   News news;
-
   NewsItem({required this.news});
 
   @override

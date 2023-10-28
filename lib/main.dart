@@ -10,6 +10,7 @@ import 'home/home_screen.dart';
 import 'model/category.dart';
 import 'my_theme.dart';
 
+
 void main() {
   runApp(ChangeNotifierProvider(
       create: (context) => AppConfigProvider(), child: MyApp()));
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
         // NewsArticle.routeName: (context) => NewsArticle(news: News()),
       },
       theme: MyTheme.lightTheme,
+
+
+      // localizationsDelegates: AppLocalizations.localizationsDelegates,
+      // supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 

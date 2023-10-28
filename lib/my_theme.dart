@@ -14,7 +14,14 @@ class MyTheme {
   static Color purpleColor = Color(0xffBC52F2);
 
   static ThemeData lightTheme = ThemeData(
-    appBarTheme: AppBarTheme(backgroundColor: primaryLight, elevation: 0),
+    appBarTheme: AppBarTheme(backgroundColor: primaryLight, elevation: 0,
+    centerTitle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(40),
+  ),
+  ),
+    ),
     textTheme: TextTheme(
       titleLarge: TextStyle(
           fontSize: 22, fontWeight: FontWeight.bold, color: whiteColor),
@@ -23,5 +30,11 @@ class MyTheme {
       titleSmall: TextStyle(
           fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
     ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+      focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+
+    )
   );
 }

@@ -20,14 +20,8 @@ class _NewsContainerState extends State<NewsContainer> {
   NewsContainerViewModel viewModel = NewsContainerViewModel();
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    viewModel.getNewsBtSourceId(widget.source.id ?? '');
-  }
-
-  @override
   Widget build(BuildContext context) {
+    viewModel.getNewsBtSourceId(widget.source.id ?? '');
     return ChangeNotifierProvider(
         create: (context) => viewModel,
         child: Consumer<NewsContainerViewModel>(
@@ -38,7 +32,7 @@ class _NewsContainerState extends State<NewsContainer> {
                   Text(viewModel.errorMessage!),
                   ElevatedButton(
                       onPressed: () {
-                        viewModel.getNewsBtSourceId(widget.source.id ?? '');
+                        viewModel.getNewsBtSourceId( widget.source.id ?? '');
                       },
                       child: Text('Try again'))
                 ],
