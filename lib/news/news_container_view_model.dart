@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:news/api_manager.dart';
+import 'package:news/model/SourceResponse.dart';
 import '../model/NewsResponse.dart';
 
 class NewsContainerViewModel extends ChangeNotifier {
   List<News>? newsList;
   String? errorMessage;
 
+
   void getNewsBtSourceId(String sourceId) async {
-    newsList = null;
+    newsList = [];
     errorMessage = null;
     notifyListeners();
     try {
-      var response = await ApiManager.getNewsBySourceId(sourceId);
+      var response = await ApiManager.getNewsBySourceId(
+          sourceId: sourceId
+      );
       if (response.status == 'error') {
         errorMessage = response.message;
       } else {

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:news/api_manager.dart';
-import 'package:news/model/NewsResponse.dart';
 import 'package:news/model/SourceResponse.dart';
 import 'package:news/my_theme.dart';
 import 'package:news/news/news_container_view_model.dart';
 import 'package:news/news/news_item.dart';
 import 'package:provider/provider.dart';
 
+import '../model/NewsResponse.dart';
+
 class NewsContainer extends StatefulWidget {
   Source source;
-
   NewsContainer({required this.source});
 
   @override
@@ -17,11 +17,40 @@ class NewsContainer extends StatefulWidget {
 }
 
 class _NewsContainerState extends State<NewsContainer> {
+  final scrollController = ScrollController();
+  int pageNumber = 1;
+  List<News> news = [];
+  bool shouldLoadingNextPage = false;
   NewsContainerViewModel viewModel = NewsContainerViewModel();
 
   @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if(scrollController.position.atEdge){
+        bool isTop = scrollController.position.pixels == 0;
+        if(!isTop){
+          shouldLoadingNextPage = true;
+          setState(() {
+
+          });
+        }
+      }
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    viewModel.getNewsBtSourceId(widget.source.id ?? '');
+    if(shouldLoadingNextPage){
+      ApiManager.getNewsBySourceId(sourceId: widget.source.id??'', pageNumber: ++pageNumber)
+          .then((newsResponse) => news.addAll(newsResponse?.articles ?? []));
+      shouldLoadingNextPage=false;
+      setState(() {
+
+      });
+    }
+    viewModel.getNewsBtSourceId( widget.source.id ?? '');
     return ChangeNotifierProvider(
         create: (context) => viewModel,
         child: Consumer<NewsContainerViewModel>(
@@ -32,23 +61,32 @@ class _NewsContainerState extends State<NewsContainer> {
                   Text(viewModel.errorMessage!),
                   ElevatedButton(
                       onPressed: () {
-                        viewModel.getNewsBtSourceId( widget.source.id ?? '');
+                        viewModel.getNewsBtSourceId(widget.source.id ?? '');
                       },
                       child: Text('Try again'))
                 ],
               );
-            } else if (viewModel.newsList == null) {
+            }
+            else if (news == null) {
               return Center(
                 child: CircularProgressIndicator(
                   color: MyTheme.primaryLight,
                 ),
               );
-            } else {
+            }
+            else {
+              if(news.isEmpty && viewModel.newsList!.isNotEmpty){
+                news = viewModel.newsList!;
+              }else if(viewModel.newsList!.isNotEmpty && news.first.title != viewModel.newsList!.first.title){
+                news = viewModel.newsList!;
+                scrollController.jumpTo(0);
+              }
               return ListView.builder(
+                controller: scrollController,
                 itemBuilder: (context, index) {
-                  return NewsItem(news: viewModel.newsList![index]);
+                  return NewsItem(news: news[index]);
                 },
-                itemCount: viewModel.newsList!.length,
+                itemCount: news.length,
               );
             }
           },
@@ -99,5 +137,11 @@ class _NewsContainerState extends State<NewsContainer> {
     //     );
     //   },
     // );
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 }
