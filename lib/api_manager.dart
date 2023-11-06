@@ -21,15 +21,17 @@ class ApiManager {
     }
   }
 
-  static Future<NewsResponse> getNewsBySourceId(String sourceId) async {
+  static Future<NewsResponse> getNewsBySourceId({required String sourceId, int pageNumber = 1}) async {
     /// https://newsapi.org/v2/everything?q=bitcoin&apiKey=160b37cde254481a8ed739c8867411d1
 
-    Uri url = Uri.https(ApiConstants.baseUrl, ApiConstants.newsApi, {
-      "apiKey": "160b37cde254481a8ed739c8867411d1",
-      "sources": sourceId,
-      // "pageSize" : pageSize,
-      // "page" : numPages
-    });
+    Uri url = Uri.https(ApiConstants.baseUrl, ApiConstants.newsApi,
+        {
+          "apiKey": "160b37cde254481a8ed739c8867411d1",
+          "sources": sourceId,
+          "pageSize": '20',
+          "page": '$pageNumber',
+          // "q" : query
+        });
 
     try {
       var response = await http.get(url);
@@ -40,4 +42,24 @@ class ApiManager {
       throw e;
     }
   }
+
+  static Future<NewsResponse> searchNews(String query) async {
+    /// https://newsapi.org/v2/everything?q=bitcoin&apiKey=160b37cde254481a8ed739c8867411d1
+
+    Uri url = Uri.https(ApiConstants.baseUrl, ApiConstants.newsApi,
+        {
+          "apiKey": "160b37cde254481a8ed739c8867411d1",
+          "q" : query
+        });
+
+    try {
+      var response = await http.get(url);
+      var bodyString = response.body;
+      var json = jsonDecode(bodyString);
+      return NewsResponse.fromJson(json);
+    } catch (e) {
+      throw e;
+    }
+  }
+
 }
